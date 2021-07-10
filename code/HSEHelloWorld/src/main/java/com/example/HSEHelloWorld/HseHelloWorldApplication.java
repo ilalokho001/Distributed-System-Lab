@@ -1,7 +1,9 @@
 package com.example.HSEHelloWorld;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,20 +11,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
+@RefreshScope
 public class HseHelloWorldApplication {
 
 	private String state = "no_state";
-      
-    @GetMapping
-	public String sayHello(){
 
-		return "Hello Esslingen, Summer Semester 2021 ("+state+")";
+	@Value("${config.source:unkown}")
+	private String configVariable;
+
+	@GetMapping("/config")
+	public String getConfigSource(){
+
+		return "Configuration Source: "+configVariable;
+
 	}
 
-	@GetMapping("/otherEndpoint")
-    public String sayHelloAgain(){
+	@GetMapping
+	public String sayHello(){
 
-		return "Hello Esslingen, Summer Semester 2021 (new feature)";
+		return "Hallo Esslingen, Summer Semester 2021 ("+state+")";
+
+	}	
+
+	@GetMapping("/otherEndpoint")
+	public String sayHelloAgainAndAgain(){
+
+		return "Hallo Esslingen, Summer Semester 2021 (very new feature)";
+
 	}
 
 	@PostMapping("/postSomething/{stringParam}")
@@ -32,7 +47,6 @@ public class HseHelloWorldApplication {
 		return "I have received the beautiful String: "+stringParam;
 
 	}
-
 
 	public static void main(String[] args) {
 		SpringApplication.run(HseHelloWorldApplication.class, args);
